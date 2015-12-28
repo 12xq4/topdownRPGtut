@@ -6,22 +6,31 @@ public class ClickToMove : MonoBehaviour {
     Vector3 position;
     public float speed;
     CharacterController cc;
-	// Use this for initialization
+    // Use this for initialization
+
+    Animation animator;
+    public AnimationClip run;
+    public AnimationClip idle;
+    public static bool inAttack;
 	void Start () {
         cc = transform.GetComponent<CharacterController>();
         position = transform.position;
+        animator = transform.GetComponent<Animation>();
+        // run = 
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	    if (Input.GetMouseButton(0))
+        if (!inAttack)
         {
-            // find where the player clicked
-            LocatePosition();
+            if (Input.GetMouseButton(0))
+            {
+                // find where the player clicked
+                LocatePosition();
+            }
+            // move the player
+            ClickAndMove();
         }
-        // move the player
-        ClickAndMove();
-
     }
 
     public void LocatePosition()
@@ -30,8 +39,10 @@ public class ClickToMove : MonoBehaviour {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if(Physics.Raycast(ray, out hit, 1000))
         {
-            position = new Vector3(hit.point.x, hit.point.y, hit.point.z);
-            Debug.Log(position);
+            if (hit.collider.tag != "Player")
+            {
+                position = new Vector3(hit.point.x, hit.point.y, hit.point.z);
+            }
         }
     }
 
@@ -44,6 +55,10 @@ public class ClickToMove : MonoBehaviour {
             newRotation.z = 0;
             transform.rotation = Quaternion.Slerp(transform.rotation, newRotation, Time.deltaTime * 10);
             cc.SimpleMove(transform.forward * speed);
+            animator.Play(run.name);
+        } else
+        {
+            animator.CrossFade(idle.name);
         }
     }
 }
