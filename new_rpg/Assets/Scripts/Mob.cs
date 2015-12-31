@@ -7,6 +7,7 @@ public class Mob : MonoBehaviour {
     public float range = 4.5f;
     public float hitRange = 1;
     public float hp;
+    public float damage;
     CharacterController cc;
     GameObject player;
 
@@ -19,12 +20,12 @@ public class Mob : MonoBehaviour {
         player = GameObject.FindGameObjectWithTag("Player");
         cc = transform.GetComponent<CharacterController>();
         hp = 15;
+        damage = 3;
 	}
 	
 	// Update is called once per frame
 	void Update ()
     {
-        Debug.Log(hp);
         if (!IsDead())
         {
             if (InRange(range))
@@ -69,7 +70,6 @@ public class Mob : MonoBehaviour {
 
     public void takeDamage(float damage)
     {
-        Debug.Log("Taken damage");
         hp -= damage;
         if (hp < 0)
             hp = 0;
@@ -78,6 +78,8 @@ public class Mob : MonoBehaviour {
     void Attack()
     {
         // Play any animations here
+        player.GetComponent<Player>().TakeDamage(damage);
+
     }
 
     void Die()
